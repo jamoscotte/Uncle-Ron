@@ -77,7 +77,7 @@ def read_datamap() -> list:
             loop_name_split = re.split("]\t|] ",l[2:],1) #l[2:].split("] ")
             loop_name_split[0] = re.sub("\[.*?\]", '', loop_name_split[0])
             var.loop_names.append(loop_name_split[0])
-            print(loop_name_split)
+            #print(loop_name_split)
             loop_pair_split = loop_name_split[1].rsplit("\t(",1)
             if len(loop_pair_split) == 1:
                 loop_pair_split = loop_name_split[1].rsplit(" (",1)
@@ -99,7 +99,7 @@ def read_datamap() -> list:
             value_pair_split = re.split("=|\t", l[1:]) #l[1:].split("=")
             #(variable_list[-1].name,value_pair_split)
             #print(variable_list[-1].name)
-            print(var.name,value_pair_split)
+            #print(var.name,value_pair_split)
             value_pair_split[0] = re.sub("\[.*?\]", '', value_pair_split[0])
             var.value_pair.append((int(value_pair_split[0]),value_pair_split[1].replace("/","//")))
             if len(var.value_pair) == var.value_range[-1]:

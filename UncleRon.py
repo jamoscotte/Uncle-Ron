@@ -44,4 +44,12 @@ print_datamap(tables)
 
 print_basecheck(tables,path)
 
+print_DE_tables(tables,path)
+
+print_csv(tables,path)
+
+print_text(tables,path)
+
+
+
 

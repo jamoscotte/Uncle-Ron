@@ -27,6 +27,8 @@ class Variable:
         self.b2b = ''                   # Bottom 2 Box range
         self.split_loop = False
         self.split_loop_head = False
+        self.multi_loop = []                # table name,table grid
+
 
 
 

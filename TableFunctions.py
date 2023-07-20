@@ -65,8 +65,12 @@ def delete_tables(tables) -> list:
                 tables.remove(table)
             elif 'SEGMENT_ORDER' in table.name:
                 tables.remove(table)
+            elif 'pipe_' in table.name:
+                tables.remove(table)
+            elif 'PIPE_' in table.name:
+                tables.remove(table)
         else:
-            if table.name == 'memberid':#'Term_PointTerm101': #'QAGE - Termination Point': #'RESP_TYPE':
+            if table.name == 'Qtypemarket1':#'Term_PointTerm101': #'QAGE - Termination Point': #'RESP_TYPE':
                 tables.remove(table)
                 delete = False
             else:
@@ -180,7 +184,7 @@ def set_column(tables,spss_columns) -> list:
             for spss_var in spss_columns:
                 if table.name == spss_var[0]:
                     if table.data_col_range:
-                        print(table.name)
+                        #print(table.name)
                         table.data_col[0] = spss_var[1]
                         table.data_col[1] = spss_var[2]
                     else:
@@ -209,6 +213,19 @@ def link_loops(tables) -> list:
                             table.loop_pair.append([table2.name,table2.data_col[0],table2.data_col[1]])
                         else:
                             table.loop_pair.append([table2.name, table2.data_col[0]])
+                        table.table_range.append(table2.table_range[0])
+        elif table.is_multi and (rn.findall(table.name) or cn.findall(table.name) or un.findall(table.name)) and not table.split_loop:
+            for table2 in tables:
+                if table2.is_multi and table != table2 and (rn.findall(table2.name) or cn.findall(table2.name) or un.findall(table2.name)) and not table2.split_loop:
+                    if nltk.edit_distance(table.name,table2.name) <= 2 and abs(len(table.name) - len(table2.name)) <= 1:
+                        if not table.split_loop_head:
+                            if table.is_multi:
+                                table.multi_loop.append([table.name, table.loop_pair])
+                        table.split_loop = True
+                        table.split_loop_head = True
+                        table2.split_loop = True
+                        if table.is_multi:
+                            table.multi_loop.append([table2.name, table2.loop_pair])
                         table.table_range.append(table2.table_range[0])
     return tables
 
