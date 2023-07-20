@@ -27,6 +27,7 @@ def delete_tables(tables) -> list:
     first_var = input("Enter name of first variable in study: ")
     delete = False
     for table in reversed(tables):
+        #print(table.name,first_var, table.name==first_var, delete)
         if table.is_multi:
             if len(table.loop_pair) < 0:
                 tables.remove(table)
@@ -65,11 +66,12 @@ def delete_tables(tables) -> list:
             elif 'SEGMENT_ORDER' in table.name:
                 tables.remove(table)
         else:
-            if table.name == 'RESP_TYPE':
+            if table.name == 'memberid':#'Term_PointTerm101': #'QAGE - Termination Point': #'RESP_TYPE':
                 tables.remove(table)
                 delete = False
             else:
                 tables.remove(table)
+
     return tables
 
 def numeric_tables(tables) -> list:
@@ -99,7 +101,7 @@ def scale_tables(tables) -> list:
                 if scale in table.value_pair[0][1]:
                     table.is_scale = True
                     table.t2b = [0, 1]
-                    if "Don't know" in table.value_pair[-1][1] or "I'm not familiar with any" in table.value_pair[-1][1] or "No opinion" in table.value_pair[-1][1]:
+                    if "Don't know" in table.value_pair[-1][1] or "I've never been a fan of this league" in table.value_pair[-1][1] or "I'm not familiar with any" in table.value_pair[-1][1] or "No opinion" in table.value_pair[-1][1] or "I have never seen or heard of them before" in table.value_pair[-1][1] or "I don't remember this person" in table.value_pair[-1][1] or "I haven't seen enough to rate" in table.value_pair[-1][1] or "Unsure" in table.value_pair[-1][1]:
                         table.move_scale = True
                         table.b2b = [len(table.value_pair)-3,len(table.value_pair)-2]
                     else:
@@ -178,6 +180,7 @@ def set_column(tables,spss_columns) -> list:
             for spss_var in spss_columns:
                 if table.name == spss_var[0]:
                     if table.data_col_range:
+                        print(table.name)
                         table.data_col[0] = spss_var[1]
                         table.data_col[1] = spss_var[2]
                     else:
@@ -202,6 +205,7 @@ def link_loops(tables) -> list:
                         table.split_loop_head = True
                         table2.split_loop = True
                         if table.data_col_range:
+                            #print(table.name)
                             table.loop_pair.append([table2.name,table2.data_col[0],table2.data_col[1]])
                         else:
                             table.loop_pair.append([table2.name, table2.data_col[0]])

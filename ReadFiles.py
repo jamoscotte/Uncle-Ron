@@ -44,13 +44,16 @@ def read_datamap() -> list:
             line_split = l.split(":")
             var = Variable()
             if ']' in line_split[0]:
+
                 var.name = line_split[0][1:-1]
             else:
                 var.name = line_split[0]
+
             if len(line_split) > 2:
                 var.qtext = line_split[1][1:] + ' ' + line_split[2]
             else:
                 var.qtext = line_split[1][1:]
+            var.qtext = re.sub("\[.*?\]", '', var.qtext)
             new_var = False
             variable_list.append(var)
         elif l[0] == '(':               # Setting value range
@@ -68,15 +71,19 @@ def read_datamap() -> list:
             var.value_range.append(int(value_split[1]))
             value_loop = True
         elif var.name in l:
+
             var.is_loop = True
             #print(l)
             loop_name_split = re.split("]\t|] ",l[2:],1) #l[2:].split("] ")
+            loop_name_split[0] = re.sub("\[.*?\]", '', loop_name_split[0])
             var.loop_names.append(loop_name_split[0])
-            #print(loop_name_split)
+            print(loop_name_split)
             loop_pair_split = loop_name_split[1].rsplit("\t(",1)
             if len(loop_pair_split) == 1:
                 loop_pair_split = loop_name_split[1].rsplit(" (",1)
+                loop_pair_split[0] = re.sub("\[.*?\]", '', loop_pair_split[0])
             #print(loop_pair_split)
+            loop_pair_split[0] = re.sub("\[.*?\]", '', loop_pair_split[0])
             if "-" in loop_pair_split[1]:
                 loop_pair_range_split = loop_pair_split[1][:-1].split("-")
                 #print(loop_pair_range_split)
@@ -92,7 +99,8 @@ def read_datamap() -> list:
             value_pair_split = re.split("=|\t", l[1:]) #l[1:].split("=")
             #(variable_list[-1].name,value_pair_split)
             #print(variable_list[-1].name)
-            #print(var.name,value_pair_split)
+            print(var.name,value_pair_split)
+            value_pair_split[0] = re.sub("\[.*?\]", '', value_pair_split[0])
             var.value_pair.append((int(value_pair_split[0]),value_pair_split[1].replace("/","//")))
             if len(var.value_pair) == var.value_range[-1]:
                 if var.value_range[0] == 0:
@@ -113,14 +121,29 @@ def read_SPSS() -> list:
     root.withdraw()
     file_path = filedialog.askopenfilename()
 
+    print("Opening SPSS . . . \n")
+
     df = pd.read_spss(file_path)
     base = len(df['record'])
     those_asked = []
+    delete_tables = []
+
+    print("Checking counts in SPSS . . . \n")
 
     for (column_name,column_data) in df.iteritems():
         if df[column_name].notnull().sum() < base:
             those_asked.append(column_name)
-    return those_asked
+
+    print("Checking for empty variables in SPSS . . . \n")
+
+
+    ################################################################
+    for (column_name, column_data) in df.iteritems():
+        if len(df[column_name].value_counts()) == 0:
+            delete_tables.append(column_name)
+    ################################################################
+
+    return those_asked, delete_tables
 
 def read_spssmap() -> list:
     """
@@ -151,8 +174,6 @@ def read_spssmap() -> list:
             var_pair = [column_split[2],int(column_value[0]),int(column_value[1])]
 
         updated_cols.append(var_pair)
-
-
 
 
 

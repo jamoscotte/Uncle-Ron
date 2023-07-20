@@ -10,7 +10,7 @@ from API import *
 # Getting files from Decipher API
 path = get_files()
 
-bases = read_SPSS()
+bases, delete_list = read_SPSS()
 
 spss_columns = read_spssmap()
 
@@ -23,8 +23,6 @@ tables = delete_tables(tables)
 tables = set_base(tables, bases)
 
 tables = numeric_tables(tables)
-
-
 
 tables = scale_tables(tables)
 
@@ -43,5 +41,7 @@ print_grids(tables,path)
 print_9999(tables,path)
 
 print_datamap(tables)
+
+print_basecheck(tables,path)
 
 
